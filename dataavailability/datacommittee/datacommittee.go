@@ -89,6 +89,7 @@ func (d *DataCommitteeBackend) Init() error {
 
 // GetSequence gets backend data one hash at a time. This should be optimized on the DAC side to get them all at once.
 func (d *DataCommitteeBackend) GetSequence(ctx context.Context, hashes []common.Hash, dataAvailabilityMessage []byte) ([][]byte, error) {
+	println("[GetSequence] Getting sequence data")
 	// TODO: optimize this on the DAC side by implementing a multi batch retrieve api
 	var batchData [][]byte
 	for _, h := range hashes {
@@ -103,6 +104,7 @@ func (d *DataCommitteeBackend) GetSequence(ctx context.Context, hashes []common.
 
 // GetBatchL2Data returns the data from the DAC. It checks that it matches with the expected hash
 func (d *DataCommitteeBackend) GetBatchL2Data(hash common.Hash) ([]byte, error) {
+	println("[GetBatchL2Data] Getting batch data")
 	intialMember := d.selectedCommitteeMember
 	found := false
 	for !found && intialMember != -1 {

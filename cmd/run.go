@@ -21,6 +21,7 @@ import (
 	"github.com/0xPolygonHermez/zkevm-node/config"
 	"github.com/0xPolygonHermez/zkevm-node/dataavailability"
 	"github.com/0xPolygonHermez/zkevm-node/dataavailability/datacommittee"
+	"github.com/0xPolygonHermez/zkevm-node/dataavailability/eigenda"
 	"github.com/0xPolygonHermez/zkevm-node/db"
 	"github.com/0xPolygonHermez/zkevm-node/etherman"
 	"github.com/0xPolygonHermez/zkevm-node/ethtxmanager"
@@ -290,6 +291,7 @@ func runMigrations(c db.Config, name string) {
 }
 
 func newEtherman(c config.Config, st *state.State) (*etherman.Client, error) {
+	println("newEtherman ", fmt.Sprintf("%+v", c.Etherman))
 	ethman, err := etherman.NewClient(c.Etherman, c.NetworkConfig.L1Config, nil)
 	if err != nil {
 		return nil, err
@@ -326,6 +328,7 @@ func newDataAvailability(c config.Config, st *state.State, etherman *etherman.Cl
 		return nil, fmt.Errorf("error getting data availability protocol name: %v", err)
 	}
 	var daBackend dataavailability.DABackender
+	println("protocol name: ", daProtocolName)
 	switch daProtocolName {
 	case string(dataavailability.DataAvailabilityCommittee):
 		var (
@@ -352,6 +355,21 @@ func newDataAvailability(c config.Config, st *state.State, etherman *etherman.Cl
 		if err != nil {
 			return nil, err
 		}
+
+	case string(dataavailability.EigenDA):
+		// dacAddr, err := etherman.GetDAProtocolAddr()
+		// if err != nil {
+		// 	return nil, fmt.Errorf("error getting trusted sequencer URI. Error: %v", err)
+		// }
+
+		daBackend = eigenda.EigenDA{
+			Config: eigenda.Config{
+				StatusQueryTimeout:       time.Second * 500,
+				RPC:                      "disperser-holesky.eigenda.xyz:443",
+				StatusQueryRetryInterval: time.Second * 1,
+			},
+		}
+
 	default:
 		return nil, fmt.Errorf("unexpected / unsupported DA protocol: %s", daProtocolName)
 	}
@@ -602,6 +620,7 @@ func newState(ctx context.Context, c *config.Config, etherman *etherman.Client, 
 	}
 	log.Infof("Starting L1InfoRoot: %v", l1inforoot.String())
 
+	println("rollup genesis number: ", c.NetworkConfig.Genesis.RollupBlockNumber)
 	forkIDIntervals, err := forkIDIntervals(ctx, st, etherman, c.NetworkConfig.Genesis.RollupBlockNumber)
 	if err != nil {
 		log.Fatal("error getting forkIDs. Error: ", err)

@@ -76,6 +76,7 @@ func (g *ProcessorL1SequenceBatchesEtrog) Process(ctx context.Context, order eth
 
 // ProcessSequenceBatches process sequence of batches
 func (p *ProcessorL1SequenceBatchesEtrog) ProcessSequenceBatches(ctx context.Context, sequencedBatches []etherman.SequencedBatch, blockNumber uint64, l1BlockTimestamp time.Time, dbTx pgx.Tx) error {
+	println("ProcessSequenceBatches", "l1_blockNumber", blockNumber)
 	if len(sequencedBatches) == 0 {
 		log.Warn("Empty sequencedBatches array detected, ignoring...")
 		return nil

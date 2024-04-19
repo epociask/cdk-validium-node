@@ -74,7 +74,7 @@ MultiGasProvider = false
 [EthTxManager]
 FrequencyToMonitorTxs = "1s"
 WaitTxToBeMined = "2m"
-ForcedGas = 0
+ForcedGas = 8000000
 GasPriceMarginFactor = 1
 MaxGasPriceLimit = 0
 
@@ -159,7 +159,7 @@ L1BlockTimestampMargin = "30s"
 MaxTxSizeForL1 = 131072
 L2Coinbase = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
 PrivateKey = {Path = "/pk/sequencer.keystore", Password = "testonly"}
-GasOffset = 80000
+GasOffset = 8000000
 MaxBatchesForL1 = 300
 
 [Aggregator]

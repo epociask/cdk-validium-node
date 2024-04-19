@@ -70,10 +70,12 @@ func (c *Client) Add(ctx context.Context, owner, id string, from common.Address,
 	}
 	// get gas
 	gas, err := c.etherman.EstimateGas(ctx, from, to, value, data)
+	println("Forced gas: ", c.cfg.ForcedGas)
 	if err != nil {
 		err := fmt.Errorf("failed to estimate gas: %w, data: %v", err, common.Bytes2Hex(data))
 		log.Error(err.Error())
 		if c.cfg.ForcedGas > 0 {
+			println("Using forced gas")
 			gas = c.cfg.ForcedGas
 		} else {
 			return err
@@ -532,7 +534,14 @@ func (c *Client) reviewMonitoredTx(ctx context.Context, mTx *monitoredTx, mTxLog
 	if err != nil {
 		err := fmt.Errorf("failed to estimate gas: %w", err)
 		mTxLogger.Errorf(err.Error())
-		return err
+
+		// use overriden gas for PoC purposes
+		if c.cfg.ForcedGas > 0 {
+			mTxLogger.Infof("using forced gas")
+			gas = c.cfg.ForcedGas
+		} else {
+			return err
+		}
 	}
 
 	// check gas

@@ -385,6 +385,7 @@ services:
       - "mix do ecto.create, ecto.migrate; mix phx.server"
 
   zkevm-explorer-l1-db:
+    platform: linux/amd64
     container_name: zkevm-explorer-l1-db
     image: postgres:15
     ports:
@@ -399,6 +400,7 @@ services:
       - "500"
 
   zkevm-explorer-l2:
+    platform: linux/amd64
     container_name: zkevm-explorer-l2
     image: hermeznetwork/zkevm-explorer:latest
     ports:
@@ -452,8 +454,9 @@ services:
     command: [ "postgres", "-N", "500" ]
 
   zkevm-mock-l1-network:
-    container_name: zkevm-mock-l1-network
-    image: 0xpolygon/cdk-validium-contracts:forkId8
+    platform: linux/amd64
+    image: hermeznetwork/geth-cdk-contracts:feed
+    pull_policy: if_not_present
     ports:
       - 8545:8545
       - 8546:8546
@@ -512,6 +515,7 @@ services:
       - "--rpc.allow-unprotected-txs"
 
   zkevm-prover:
+    platform: linux/amd64
     container_name: zkevm-prover
     image: hermeznetwork/zkevm-prover:v6.0.0
     ports:

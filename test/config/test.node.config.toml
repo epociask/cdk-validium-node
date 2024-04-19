@@ -137,6 +137,7 @@ L2Coinbase = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
 PrivateKey = {Path = "/pk/sequencer.keystore", Password = "testonly"}
 	[SequenceSender.StreamClient]
 		Server = "zkevm-sequencer:6900"
+GasOffset = 800000
 
 [Aggregator]
 Host = "0.0.0.0"
@@ -157,7 +158,7 @@ AggLayerURL = ""
 SequencerPrivateKey = {}
 
 [EthTxManager]
-ForcedGas = 0
+ForcedGas = 10000000
 PrivateKeys = [
 	{Path = "/pk/sequencer.keystore", Password = "testonly"},
 	{Path = "/pk/aggregator.keystore", Password = "testonly"}
