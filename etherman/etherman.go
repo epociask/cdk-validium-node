@@ -214,7 +214,6 @@ type Client struct {
 // NewClient creates a new etherman.
 func NewClient(cfg Config, l1Config L1Config, da dataavailability.BatchDataProvider) (*Client, error) {
 	// Connect to ethereum node'
-	println(fmt.Sprintf("%+v", l1Config))
 	ethClient, err := ethclient.Dial(cfg.URL)
 	if err != nil {
 		log.Errorf("error connecting to %s: %+v", cfg.URL, err)
@@ -256,17 +255,14 @@ func NewClient(cfg Config, l1Config L1Config, da dataavailability.BatchDataProvi
 		log.Errorf("error creating NewPol client (%s). Error: %w", l1Config.PolAddr.String(), err)
 		return nil, err
 	}
-	println("fetching dap")
 	dapAddr, err := zkevm.DataAvailabilityProtocol(&bind.CallOpts{Pending: false})
 	if err != nil {
 		return nil, err
 	}
-	println("constructing dap")
 	dap, err := dataavailabilityprotocol.NewDataavailabilityprotocol(dapAddr, ethClient)
 	if err != nil {
 		return nil, err
 	}
-	println("dap constructed for address: ", dapAddr.String())
 	var scAddresses []common.Address
 	scAddresses = append(scAddresses, l1Config.ZkEVMAddr, l1Config.RollupManagerAddr, l1Config.GlobalExitRootManagerAddr)
 
@@ -1334,7 +1330,6 @@ func decodeSequencedBatches(smcAbi abi.ABI, txData []byte, forkID uint64, lastBa
 
 	switch method.Name {
 	case "sequenceBatches":
-		println("Decoding non validium rollup data")
 		var sequences []polygonzkevm.PolygonRollupBaseEtrogBatchData
 		err := json.Unmarshal(bytedata, &sequences)
 		if err != nil {
@@ -1375,7 +1370,6 @@ func decodeSequencedBatches(smcAbi abi.ABI, txData []byte, forkID uint64, lastBa
 
 		return sequencedBatches, nil
 	case "sequenceBatchesValidium":
-		println("Decoding validium data")
 		var sequencesValidium []polygonzkevm.PolygonValidiumEtrogValidiumBatchData
 		err := json.Unmarshal(bytedata, &sequencesValidium)
 		if err != nil {
@@ -1406,7 +1400,6 @@ func decodeSequencedBatches(smcAbi abi.ABI, txData []byte, forkID uint64, lastBa
 			batchNums = append(batchNums, bn)
 			hashes = append(hashes, validiumData.TransactionsHash)
 		}
-		println("Getting batch L2 data")
 		batchL2Data, err := da.GetBatchL2Data(batchNums, hashes, dataAvailabilityMsg)
 		if err != nil {
 			return nil, err

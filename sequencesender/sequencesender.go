@@ -199,7 +199,6 @@ func (s *SequenceSender) tryToSendSequence(ctx context.Context) {
 	}
 
 	monitoredTxID := fmt.Sprintf(monitoredIDFormat, firstSequence.BatchNumber, lastSequence.BatchNumber)
-	println("Adding tx with gas offset ", s.cfg.GasOffset)
 	err = s.ethTxManager.Add(ctx, ethTxManagerOwner, monitoredTxID, s.cfg.SenderAddress, to, nil, data, s.cfg.GasOffset, nil)
 	if err != nil {
 		mTxLogger := ethtxmanager.CreateLogger(ethTxManagerOwner, monitoredTxID, s.cfg.SenderAddress, to)

@@ -247,7 +247,6 @@ func (s *ClientSynchronizer) Sync() error {
 			log.Info("synchronizing events from RollupManager that happen before rollup creation")
 			for i := s.genesis.RollupManagerBlockNumber; true; i += s.cfg.SyncChunkSize {
 				toBlock := min(i+s.cfg.SyncChunkSize-1, s.genesis.RollupBlockNumber-1)
-				log.Debug("Getting rollup info from block ", i, " to block ", toBlock)
 				blocks, order, err := s.etherMan.GetRollupInfoByBlockRange(s.ctx, i, &toBlock)
 				if err != nil {
 					log.Error("error getting rollupInfoByBlockRange before rollup genesis: ", err)

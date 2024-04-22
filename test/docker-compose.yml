@@ -323,6 +323,45 @@ services:
       - "-N"
       - "500"
 
+  bridge-db:
+    container_name: bridge-db
+    image: postgres
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    expose:
+      - 6969
+    ports:
+      - 6969:5432
+    environment:
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test_password
+      - POSTGRES_DB=test_db
+    command: ["postgres", "-N", "500"]
+
+  bridge-service:
+    container_name: bridge-service
+    image: zkevm-bridge-service:local
+    ports:
+      - 8080:8080
+      - 9090:9090
+    environment:
+      - ZKEVM_BRIDGE_DATABASE_USER=test_user
+      - ZKEVM_BRIDGE_DATABASE_PASSWORD=test_password
+      - ZKEVM_BRIDGE_DATABASE_NAME=test_db
+      - ZKEVM_BRIDGE_DATABASE_HOST=adsf
+      - ZKEVM_BRIDGE_DATABASE_PORT=6969
+    volumes:
+      - /Users/ethenpociask/polygon/zkevm-bridge-service/test/test.keystore.claimtx:/pk/keystore.claimtxmanager
+      - /Users/ethenpociask/polygon/zkevm-bridge-service/config/config.local.toml:/app/config.toml
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app/zkevm-bridge run --cfg /app/config.toml"
+
   zkevm-pool-db:
     container_name: zkevm-pool-db
     image: postgres:15
@@ -368,9 +407,11 @@ services:
   zkevm-explorer-l1:
     container_name: zkevm-explorer-l1
     image: hermeznetwork/zkevm-explorer:latest
+    platform: linux/amd64
     ports:
       - 4000:4000
     environment:
+      - EXPERIMENTAL_DOCKER_DESKTOP_FORCE_QEMU=1
       - NETWORK=ETH
       - SUBNETWORK=Local Ethereum
       - COIN=ETH
@@ -455,7 +496,7 @@ services:
 
   zkevm-mock-l1-network:
     platform: linux/amd64
-    image: hermeznetwork/geth-cdk-contracts:feed
+    image: hermeznetwork/geth-zkevm-contracts:42069
     pull_policy: if_not_present
     ports:
       - 8545:8545
